@@ -1,46 +1,10 @@
-var CACHE_NAME = 'static-cache';
-var urlsToCache = [
-  '.',
-  'index.html',
-  'style.css',
-  'css/animate.css',
-  'css/waypoints.css',
-  'js/jquery.waypoints.min.js',
-  'js/waypoints.js'
-];
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-    .then(function(cache) {
-      return cache.addAll(urlsToCache);
-    })
-  );
-});
-
-self.addEventListener('fetch', function(event) {
-    event.respondWith(
-      caches.match(event.request)
-      .then(function(response) {
-        return response || fetchAndCache(event.request);
-      })
-    );
-  });
-  
-  function fetchAndCache(url) {
-    return fetch(url)
-    .then(function(response) {
-      // Check if we received a valid response
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      return caches.open(CACHE_NAME)
-      .then(function(cache) {
-        cache.put(url, response.clone());
-        return response;
-      });
-    })
-    .catch(function(error) {
-      console.log('Request failed:', error);
-      // You could return a custom offline 404 page here
+if ('serviceWorker' in navigator) {
+    console.log('CLIENT: service worker registration in progress.');
+    navigator.serviceWorker.register('https://cdn.css-tricks.com/service-worker.js').then(function() {
+      console.log('CLIENT: service worker registration complete.');
+    }, function() {
+      console.log('CLIENT: service worker registration failure.');
     });
+  } else {
+    console.log('CLIENT: service worker is not supported.');
   }
